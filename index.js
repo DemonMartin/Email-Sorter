@@ -1,48 +1,59 @@
-// Made by Demon Martin#0193, I take no response for what this tool gets used for.
-console.clear()
-const fs = require(`fs`)
-if (!fs.existsSync(`./list.txt`)) {
-    return console.log(`[Error] Found no list.txt!`)
-}
+function processList() {
+  // Created by @softwares (discord). I take no responsibility for the usage of this tool.
+  console.clear();
 
-let List = fs.readFileSync(`./list.txt`, "utf8").replace(/(\r)/gm, "").trim().split(`\n`)
-let Types = {};
-let Endings = []
+  const fs = require(`fs`);
 
-if (!List) {
-    return console.log("[Error] list.txt is empty!")
-} else {
+  if (!fs.existsSync(`./list.txt`)) {
+    console.log(`[Error] Unable to find list.txt!`);
+    return;
+  }
 
-}
+  let List = fs.readFileSync(`./list.txt`, "utf8").replace(/(\r)/gm, "").trim().split(`\n`);
+  let Types = {};
+  let Endings = [];
 
-// CHECK LIST AND SORT
-List.forEach(line => {
-    var acc_split = line.split(`@`)
-    var ending = acc_split[1]
+  if (!List) {
+    console.log("[Error] list.txt is empty!");
+    return;
+  }
+
+  // CHECK LIST AND SORT
+  List.forEach(line => {
+    var acc_split = line.split(`@`);
+    var ending = acc_split[1];
+
     if (!Types[`${ending}`]) {
-        Endings.push(ending)
-        Types[`${ending}`] = [`${line}`]
-        return;
+      Endings.push(ending);
+      Types[`${ending}`] = [`${line}`];
+      return;
     }
-    Types[`${ending}`].push(line)
-});
 
-/*console.log(`[LOG] Types: ${JSON.stringify(Types)}`)*/
+    Types[`${ending}`].push(line);
+  });
 
-if (!fs.existsSync(`./emails/`)) {
-    console.log("[Error] Couldn't find \"emails\" folder, creating one.")
-    fs.mkdirSync(`./emails/`)
-}
-// WRITE LIST INTO EACH FILE
-if(!Endings.length < 1) {
-    return console.log("[Error] List.txt is empty!")
-} 
-console.log(`[LOG] Found Endings: ${Endings.join(`, `)}`)
+  /*console.log(`[LOG] Types: ${JSON.stringify(Types)}`)*/
 
-Endings.forEach((end) => {
+  if (!fs.existsSync(`./emails/`)) {
+    console.log("[Error] Couldn't find the \"emails\" folder. Creating one.");
+    fs.mkdirSync(`./emails/`);
+  }
+
+  // WRITE LIST INTO EACH FILE
+  if (Endings.length < 1) {
+    console.log("[Error] List.txt is empty!");
+    return;
+  }
+
+  console.log(`[LOG] Found Endings: ${Endings.join(`, `)}`);
+
+  Endings.forEach((end) => {
     let sortedList = Types[`${end}`].join(`\n`).trim();
-    fs.writeFileSync(`./emails/${end}.txt`, sortedList)
-    console.log(`[Created] ${end}.txt with ${sortedList.length} emails.`)
-})
+    fs.writeFileSync(`./emails/${end}.txt`, sortedList);
+    console.log(`[Created] ${end}.txt with ${sortedList.length} emails.`);
+  });
 
-console.log(`[Finshed] Created ${Endings.length} files in "./emails/"`)
+  console.log(`[Finished] Created ${Endings.length} files in "./emails/"`);
+}
+
+processList();
